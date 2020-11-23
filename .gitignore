@@ -3,3 +3,4 @@ venv/
 *.pyc
 choto/migrations/
 db.sqlite3
+*.json

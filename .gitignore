@@ -3,3 +3,12 @@
 .eslintcache
 /.idea/
 /.vscode/
+backend/venv/
+
+backend/db.sqlite3
+
+backend/trim_backend/__pycache__/
+
+backend/trim_url/__pycache__/
+
+backend/trim_url/migrations/

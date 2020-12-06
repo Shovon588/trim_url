@@ -39,7 +39,7 @@ class App extends Component {
 		if (!this.isValidURL(url)) {
 			alert('You need to enter a valid url.');
 		} else {
-			let api_url = 'http://127.0.0.1:8000/trim/';
+			let api_url = 'http://127.0.0.1:8000/';
 			let post_obj = {
 				link: url,
 			};
@@ -112,8 +112,7 @@ class App extends Component {
 			hashed_code = temp[temp.length - 1];
 		}
 
-		let api_url =
-			'http://127.0.0.1:8000/trim/click-info/' + hashed_code + '/';
+		let api_url = 'http://127.0.0.1:8000/click-info/' + hashed_code + '/';
 
 		axios
 			.get(api_url)

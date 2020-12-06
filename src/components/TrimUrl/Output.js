@@ -3,7 +3,7 @@ import React from 'react';
 function Input(props) {
 	console.log(props);
 	return (
-		<div className='main-div'>
+		<div className='main-div' style={{ padding: '3%' }}>
 			<h2>Nice! Short link is ready.</h2>
 			<div className='insider-div'>
 				<input

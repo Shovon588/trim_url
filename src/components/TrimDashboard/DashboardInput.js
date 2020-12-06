@@ -3,7 +3,7 @@ import './style.css';
 
 function DashboardInput(props) {
 	return (
-		<div className='main-div'>
+		<div className='main-div' style={{ padding: '3%' }}>
 			<h2>Check your url status.</h2>
 			<div className='insider-div'>
 				<input

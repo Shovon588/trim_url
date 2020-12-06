@@ -2,7 +2,7 @@ import React from 'react';
 
 function Input(props) {
 	return (
-		<div className='main-div'>
+		<div className='main-div' style={{ padding: '3%' }}>
 			<h2>Got an ugly url? Trim it!</h2>
 			<div className='insider-div'>
 				<input

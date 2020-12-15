@@ -21,13 +21,33 @@ class TrimLink(APIView):
 
         if serializer.is_valid():
             link = serializer.validated_data.get("link")
+            alias = serializer.validated_data.get("alias")
+
+            if alias:
+                try:
+                    print("Not available")
+                    link = Trim.objects.get(code=alias)
+                    return Response({"status": "failed",
+                                     "message": "Alias not available."},
+                                    status=status.HTTP_204_NO_CONTENT)
+                except:
+                    link_obj = Trim.objects.create(link=link, code=alias)
+                    return Response({"status": "success",
+                                     "message": "Short link generated with alias.",
+                                     "data": {
+                                         "hash_code": alias,
+                                         "short_link": BASE_URL + alias
+                                     }
+                                     },
+                                    status=status.HTTP_200_OK)
+
             link_obj = Trim.objects.create(link=link)
             hash_code = hashing(link_obj.id)
             link_obj.code = hash_code
             link_obj.save()
 
             return Response({"status": "success",
-                             "message": "Hash code generated",
+                             "message": "Short link generated with hash code.",
                              "data": {
                                  "hash_code": hash_code,
                                  "short_link": BASE_URL + hash_code
@@ -35,6 +55,7 @@ class TrimLink(APIView):
                              },
                             status=status.HTTP_200_OK)
 
+        print(serializer.errors)
         return Response({"status": "failed",
                          "error": serializer.errors},
                         status=status.HTTP_400_BAD_REQUEST)
@@ -44,8 +65,7 @@ class ClickInfoView(APIView):
 
     def get(self, request, hashed_code):
         try:
-            obj_id = unhashing(hashed_code)
-            link_obj = Trim.objects.get(id=obj_id)
+            link_obj = Trim.objects.get(code=hashed_code)
             short_link = BASE_URL + link_obj.code
         except:
             return Response({"status": "failed",
@@ -103,9 +123,8 @@ class ClickInfoView(APIView):
 
 
 def handle_short_url(request, hashed_code):
-    obj_id = unhashing(hashed_code)
     try:
-        link = Trim.objects.get(id=obj_id)
+        link = Trim.objects.get(code=hashed_code)
     except:
         return HttpResponse("<h1 style='text-align: center'>Hmm, That was an odd link.</h1>")
 

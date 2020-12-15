@@ -11,13 +11,10 @@ class App extends Component {
 	constructor(props) {
 		super(props);
 		this.state = {
-			input: true,
-			output: false,
-			dashboard_input: false,
-			dashboard: false,
-			oops: false,
+			current_page: 'home',
 			url: '',
 			data: {},
+			error: '',
 		};
 	}
 
@@ -36,6 +33,8 @@ class App extends Component {
 
 	handleSubmit = () => {
 		let url = document.querySelector('#url').value;
+		let alias = document.querySelector('#alias').value;
+
 		if (!this.isValidURL(url)) {
 			alert('You need to enter a valid url.');
 		} else {
@@ -43,29 +42,31 @@ class App extends Component {
 			let post_obj = {
 				link: url,
 			};
+			if (alias !== '') {
+				post_obj['alias'] = alias;
+			}
+
 			axios
 				.post(api_url, post_obj)
 				.then((response) => {
 					if (response.status === 200) {
 						this.setState({
-							input: false,
-							output: true,
-							oops: true,
+							current_page: 'trim_output',
 							url: response.data.data.short_link,
 						});
 					} else {
+						console.log('res', response);
 						this.setState({
-							input: false,
-							output: false,
-							oops: true,
+							current_page: 'oops',
+							error: 'The alias not available',
 						});
 					}
 				})
 				.catch((err) => {
+					console.log('Error ', err);
 					this.setState({
-						input: false,
-						output: false,
-						oops: true,
+						current_page: 'oops',
+						error: 'Not sure what happened.',
 					});
 				});
 		}
@@ -92,11 +93,19 @@ class App extends Component {
 		}
 	};
 
+	aliasChecker = () => {
+		let alias = document.querySelector('#alias').value;
+		if (alias.length !== 0) {
+			document.querySelector('#alias-url').innerHTML =
+				'Your url will be: http://127.0.0.1:8000/' + alias;
+		} else {
+			document.querySelector('#alias-url').innerHTML = '';
+		}
+	};
+
 	tryAgain = () => {
 		this.setState({
-			input: true,
-			output: false,
-			oops: false,
+			current_page: 'home',
 		});
 		document.querySelector('#trim-toggle').style.background = '#B18237';
 		document.querySelector('#dashboard-toggle').style.background = 'wheat';
@@ -120,24 +129,18 @@ class App extends Component {
 				console.log('Response: ', response);
 				if (response.status === 200) {
 					this.setState({
-						dashboard_input: false,
-						dashboard: true,
-						oops: false,
+						current_page: 'dash',
 						data: response.data.data,
 					});
 				} else {
 					this.setState({
-						dashboard_input: false,
-						dashboard: false,
-						oops: true,
+						current_page: 'oops',
 					});
 				}
 			})
 			.catch((err) => {
 				this.setState({
-					dashboard_input: false,
-					dashboard: false,
-					oops: true,
+					current_page: 'oops',
 				});
 			});
 	};
@@ -148,50 +151,40 @@ class App extends Component {
 			document.querySelector('#dashboard-toggle').style.background =
 				'wheat';
 			this.setState({
-				input: true,
-				output: false,
-				dashboard_input: false,
-				dashboard: false,
-				oops: false,
+				current_page: 'home',
 			});
 		} else {
 			document.querySelector('#trim-toggle').style.background = 'wheat';
 			document.querySelector('#dashboard-toggle').style.background =
 				'#B18237';
 			this.setState({
-				input: false,
-				output: false,
-				dashboard_input: true,
-				dashboard: false,
-				oops: false,
+				current_page: 'dash_input',
 			});
 		}
 	};
 
 	render() {
-		let main_div;
-		if (this.state.input) {
-			main_div = (
+		let page_data = {
+			home: (
 				<Input
 					handleSubmit={this.handleSubmit}
 					lengthChecker={this.lengthChecker}
+					aliasChecker={this.aliasChecker}
 				/>
-			);
-		} else if (this.state.output) {
-			main_div = (
+			),
+			trim_output: (
 				<Output
 					copyLinkHandler={this.copyLinkHandler}
 					openLinkHandler={this.openLinkHandler}
 					url={this.state.url}
 				/>
-			);
-		} else if (this.state.dashboard_input) {
-			main_div = <DashboardInput fetchUrlInfo={this.fetchUrlInfo} />;
-		} else if (this.state.dashboard) {
-			main_div = <Dashboard data={this.state.data} />;
-		} else {
-			main_div = <Oops tryAgain={this.tryAgain} />;
-		}
+			),
+			oops: <Oops tryAgain={this.tryAgain} error={this.state.error} />,
+			dash: <Dashboard data={this.state.data} />,
+			dash_input: <DashboardInput fetchUrlInfo={this.fetchUrlInfo} />,
+		};
+
+		let main_div = page_data[this.state.current_page];
 
 		return (
 			<div>

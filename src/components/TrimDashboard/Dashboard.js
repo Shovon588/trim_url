@@ -3,7 +3,7 @@ import './style.css';
 import { Doughnut } from 'react-chartjs-2';
 
 function Dashboard(props) {
-	console.log(props);
+	console.log('props: ', props);
 	let chart = {
 		labels: ['00-04', '04-08', '08-12', '12-16', '16-20', '20-00'],
 		datasets: [

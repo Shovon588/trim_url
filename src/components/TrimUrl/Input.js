@@ -12,9 +12,14 @@ function Input(props) {
 					placeholder='Enter your ugly url'
 					onChange={props.lengthChecker}
 				/>
-				<button className='input-button' onClick={props.handleSubmit}>
-					Trim
-				</button>
+
+				<input
+					className='input-alias'
+					type='text'
+					id='alias'
+					placeholder='ALIAS'
+					onChange={props.aliasChecker}
+				/>
 			</div>
 			<p
 				id='current-length'
@@ -26,6 +31,12 @@ function Input(props) {
 			<p
 				id='trimmed-length'
 				style={{ color: '#28a745', fontWeight: '600' }}></p>
+
+			<p id='alias-url' style={{ color: '#000', fontWeight: '600' }}></p>
+
+			<button className='input-button' onClick={props.handleSubmit}>
+				Trim
+			</button>
 		</div>
 	);
 }

@@ -2,8 +2,8 @@ import React from 'react';
 
 function Oops(props) {
 	return (
-		<div className='main-div'>
-			<h2>Oops! Not sure what happened.</h2>
+		<div className='main-div' style={{ padding: '3%' }}>
+			<h2>Oops! {props.error}</h2>
 			<h4>
 				Please,{' '}
 				<a
